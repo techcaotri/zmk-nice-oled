@@ -2,7 +2,11 @@ config NICE_EPAPER_ON
     bool "Enable nice view widget compatibility"
     default n
 
-if !NICE_EPAPER_ON
+config NICE_EPAPER_NEW_ON
+    bool "Enable nice view new widget compatibility"
+    default n
+
+if !NICE_EPAPER_ON && !NICE_EPAPER_NEW_ON
 
 if SHIELD_NICE_OLED
 
@@ -186,3 +190,7 @@ endif # SHIELD_NICE_OLED || SHIELD_NICE_EPAPER
 if NICE_EPAPER_ON
 rsource "nice_epaper/Kconfig.defconfig"
 endif # NICE_EPAPER_ON
+
+if NICE_EPAPER_NEW_ON
+rsource "nice_epaper_new/Kconfig.defconfig"
+endif # NICE_EPAPER_NEW_ON

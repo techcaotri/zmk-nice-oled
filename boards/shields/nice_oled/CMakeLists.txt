@@ -1,5 +1,7 @@
 if(CONFIG_NICE_EPAPER_ON)
 	add_subdirectory(nice_epaper)
+elseif(CONFIG_NICE_EPAPER_NEW_ON)
+	add_subdirectory(nice_epaper_new)
 else()
 if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_VIEW_WIDGET_STATUS)
   zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)

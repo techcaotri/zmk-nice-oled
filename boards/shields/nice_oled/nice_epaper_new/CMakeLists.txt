@@ -1,23 +1,19 @@
-zephyr_library()
+if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_VIEW_WIDGET_STATUS)
+  zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
 
-zephyr_library_sources(${ZEPHYR_BASE}/misc/empty_file.c)
-zephyr_library_include_directories(${ZEPHYR_LVGL_MODULE_DIR})
-zephyr_library_include_directories(${ZEPHYR_BASE}/lib/gui/lvgl/)
-zephyr_library_include_directories(${ZEPHYR_BASE}/drivers)
-zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
-
-if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM AND ((NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL))
-    zephyr_library_sources(custom_status_screen.c)
-    zephyr_library_sources(widgets/battery_status.c)
-    zephyr_library_sources(widgets/bongo_cat.c)
-    zephyr_library_sources(widgets/bongo_cat_images.c)
-    zephyr_library_sources(widgets/layer_status.c)
-    zephyr_library_sources(widgets/modifiers.c)
-    zephyr_library_sources(widgets/modifiers_sym.c)
-    zephyr_library_sources(widgets/output_status.c)
-    zephyr_library_sources(widgets/output_status_sym.c)
-endif()
-
-if(NOT CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
   zephyr_library_sources(custom_status_screen.c)
+  zephyr_library_sources(assets/images.c)
+  zephyr_library_sources(widgets/util.c)
+
+  target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS app PRIVATE
+    widgets/modifiers.c
+    widgets/modifiers_sym.c)
+
+  zephyr_library_sources(widgets/layer.c)
+  zephyr_library_sources(widgets/profile.c)
+  zephyr_library_sources(widgets/screen.c)
+  zephyr_library_sources(widgets/wpm.c)
+  zephyr_library_sources(assets/luna_images.c)
+  target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_WPM app PRIVATE widgets/luna.c)
+
 endif()

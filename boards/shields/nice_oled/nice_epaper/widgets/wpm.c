@@ -112,7 +112,7 @@ static void draw_graph(lv_obj_t *canvas, const struct status_state *state) {
 static void draw_label(lv_obj_t *canvas, const struct status_state *state) {
     lv_draw_label_dsc_t label_left_dsc;
     init_label_dsc(&label_left_dsc, LVGL_FOREGROUND, &pixel_operator_mono, LV_TEXT_ALIGN_LEFT);
-    lv_canvas_draw_text(canvas, 0, 103, 25, &label_left_dsc, "WPM");
+    lv_canvas_draw_text(canvas, 20, 103, 25, &label_left_dsc, "WPM");
 
     lv_draw_label_dsc_t label_dsc_wpm;
     init_label_dsc(&label_dsc_wpm, LVGL_FOREGROUND, &pixel_operator_mono, LV_TEXT_ALIGN_RIGHT);

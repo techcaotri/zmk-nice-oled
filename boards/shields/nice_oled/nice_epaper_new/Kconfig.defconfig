@@ -1,15 +1,10 @@
 if SHIELD_NICE_EPAPER_NEW
 
-# config LV_Z_VDB_SIZE
-#     default 100
 config LV_Z_VDB_SIZE
-    default 64
+    default 100
 
-# config LV_DPI_DEF
-#     default 161
-config LV_Z_DPI_DEF
-    int "LVGL DPI value"
-    default 148
+config LV_DPI_DEF
+    default 161
 
 config LV_Z_BITS_PER_PIXEL
     default 1
@@ -26,10 +21,8 @@ choice ZMK_DISPLAY_STATUS_SCREEN
     default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 endchoice
 
-# config LV_Z_MEM_POOL_SIZE
-#     default 4096 if ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 config LV_Z_MEM_POOL_SIZE
-    default 8192
+    default 4096 if ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
 
 config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
     imply NICE_VIEW_WIDGET_STATUS

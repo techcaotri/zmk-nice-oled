@@ -1,4 +1,8 @@
 if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_VIEW_WIDGET_STATUS)
+  zephyr_library()
+  zephyr_library_include_directories(${ZEPHYR_LVGL_MODULE_DIR})
+  zephyr_library_include_directories(${ZEPHYR_BASE}/lib/gui/lvgl/)
+  zephyr_library_include_directories(${ZEPHYR_BASE}/drivers)
   zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
   zephyr_library_sources(custom_status_screen.c)
   zephyr_library_sources(assets/images.c)
@@ -21,10 +25,15 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_NICE_VIEW_WIDGET_STATUS)
   zephyr_library_sources(widgets/wpm.c)
 
   zephyr_library_sources(assets/luna_images.c)
+  zephyr_library_sources(widgets/modifiers_img.c)
+  zephyr_library_sources(widgets/modifiers_info.c)
   target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_HID_INDICATORS app PRIVATE widgets/hid_indicators.c)
-  target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS app PRIVATE
-    widgets/modifiers.c
-    widgets/modifiers_sym.c)
+  # target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS app PRIVATE
+  #   # widgets/modifiers.c
+  #   # widgets/modifiers_sym.c
+  #   widgets/modifiers_img.c
+  #   widgets/modifiers_info.c
+  #   )
   target_sources_ifdef(CONFIG_NICE_OLED_WIDGET_WPM app PRIVATE widgets/luna.c)
   else()
     zephyr_library_sources(assets/crystal.c)

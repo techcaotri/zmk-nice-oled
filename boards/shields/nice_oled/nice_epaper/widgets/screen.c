@@ -39,10 +39,10 @@ static struct zmk_widget_luna luna_widget;
 /**
  * modifiers
  **/
-#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS)
-#include "modifiers.h"                               // Incluir el archivo de cabecera de modifiers
-static struct zmk_widget_modifiers modifiers_widget; // Declarar el widget de modifiers
-#endif
+// #if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS)
+// #include "modifiers.h"                               // Incluir el archivo de cabecera de modifiers
+// static struct zmk_widget_modifiers modifiers_widget; // Declarar el widget de modifiers
+// #endif
 
 /**
  * hid indicators
@@ -234,9 +234,10 @@ int zmk_widget_screen_init(struct zmk_widget_screen *widget, lv_obj_t *parent) {
     zmk_widget_hid_indicators_init(&hid_indicators_widget, canvas);
 #endif
 
-#if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS)
-    zmk_widget_modifiers_init(&modifiers_widget, canvas); // Inicializar el widget de modifiers
-#endif
+// #if IS_ENABLED(CONFIG_NICE_OLED_WIDGET_MODIFIERS_INDICATORS)
+//     zmk_widget_modifiers_init(&modifiers_widget, canvas); // Inicializar el widget de modifiers
+//     lv_obj_align(zmk_widget_modifiers_obj(&modifiers_widget), LV_ALIGN_TOP_LEFT, 0, 0);
+// #endif
     return 0;
 }
 

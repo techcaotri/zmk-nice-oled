@@ -24,34 +24,43 @@ struct modifiers_state {
 
 struct modifier_symbol {
     uint8_t modifier;
-    const lv_img_dsc_t *symbol_dsc;
+    const lv_img_dsc_t *symbol_dsc_normal;
+    const lv_img_dsc_t *symbol_dsc_inverted;
     lv_obj_t *symbol;
-    lv_obj_t *selection_line;
     bool is_active;
 };
 
+// Declare both normal and inverted icons
 LV_IMG_DECLARE(control_icon);
+LV_IMG_DECLARE(control_icon_inverted);
 struct modifier_symbol ms_control = {
     .modifier = MOD_LCTL | MOD_RCTL,
-    .symbol_dsc = &control_icon,
+    .symbol_dsc_normal = &control_icon,
+    .symbol_dsc_inverted = &control_icon_inverted,
 };
 
 LV_IMG_DECLARE(shift_icon);
+LV_IMG_DECLARE(shift_icon_inverted);
 struct modifier_symbol ms_shift = {
     .modifier = MOD_LSFT | MOD_RSFT,
-    .symbol_dsc = &shift_icon,
+    .symbol_dsc_normal = &shift_icon,
+    .symbol_dsc_inverted = &shift_icon_inverted,
 };
 
 LV_IMG_DECLARE(opt_icon);
+LV_IMG_DECLARE(opt_icon_inverted);
 struct modifier_symbol ms_opt = {
     .modifier = MOD_LALT | MOD_RALT,
-    .symbol_dsc = &opt_icon,
+    .symbol_dsc_normal = &opt_icon,
+    .symbol_dsc_inverted = &opt_icon_inverted,
 };
 
 LV_IMG_DECLARE(cmd_icon);
+LV_IMG_DECLARE(cmd_icon_inverted);
 struct modifier_symbol ms_cmd = {
     .modifier = MOD_LGUI | MOD_RGUI,
-    .symbol_dsc = &cmd_icon,
+    .symbol_dsc_normal = &cmd_icon,
+    .symbol_dsc_inverted = &cmd_icon_inverted,
 };
 
 struct modifier_symbol *modifier_symbols[] = {
@@ -62,36 +71,27 @@ struct modifier_symbol *modifier_symbols[] = {
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-static void anim_x_cb(void *var, int32_t v) { lv_obj_set_x(var, v); }
-
-static void move_object_x(void *obj, int32_t from, int32_t to) {
-    lv_anim_t a;
-    lv_anim_init(&a);
-    lv_anim_set_var(&a, obj);
-    lv_anim_set_time(&a, 100); // will be replaced with lv_anim_set_duration
-    lv_anim_set_exec_cb(&a, anim_x_cb);
-    lv_anim_set_path_cb(&a, lv_anim_path_overshoot);
-    lv_anim_set_values(&a, from, to);
-    lv_anim_start(&a);
-}
-
 static void set_modifiers(lv_obj_t *widget, struct modifiers_state state) {
     for (int i = 0; i < NUM_SYMBOLS; i++) {
         bool mod_is_active = state.modifiers & modifier_symbols[i]->modifier;
 
-        if (mod_is_active && !modifier_symbols[i]->is_active) {
-            move_object_x(modifier_symbols[i]->symbol, 0, 2);
-            modifier_symbols[i]->is_active = true;
-        } else if (!mod_is_active && modifier_symbols[i]->is_active) {
-            move_object_x(modifier_symbols[i]->symbol, 2, 0);
-            modifier_symbols[i]->is_active = false;
+        if (mod_is_active != modifier_symbols[i]->is_active) {
+            // Switch between normal and inverted icons based on active state
+            const lv_img_dsc_t *icon_to_use = mod_is_active ? 
+                modifier_symbols[i]->symbol_dsc_inverted : 
+                modifier_symbols[i]->symbol_dsc_normal;
+            
+            lv_img_set_src(modifier_symbols[i]->symbol, icon_to_use);
+            modifier_symbols[i]->is_active = mod_is_active;
         }
     }
 }
 
 void modifiers_update_cb(struct modifiers_state state) {
     struct zmk_widget_modifiers *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_modifiers(widget->obj, state); }
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { 
+        set_modifiers(widget->obj, state); 
+    }
 }
 
 static struct modifiers_state modifiers_get_state(const zmk_event_t *eh) {
@@ -112,7 +112,10 @@ int zmk_widget_modifiers_init(struct zmk_widget_modifiers *widget, lv_obj_t *par
     for (int i = 0; i < NUM_SYMBOLS; i++) {
         modifier_symbols[i]->symbol = lv_img_create(widget->obj);
         lv_obj_align(modifier_symbols[i]->symbol, LV_ALIGN_TOP_LEFT, 0, 2 + (SIZE_SYMBOLS + 2) * i);
-        lv_img_set_src(modifier_symbols[i]->symbol, modifier_symbols[i]->symbol_dsc);
+        // Initialize with normal (inactive) icon
+        lv_img_set_src(modifier_symbols[i]->symbol, modifier_symbols[i]->symbol_dsc_normal);
+        // Initialize as inactive
+        modifier_symbols[i]->is_active = false;
     }
 
     sys_slist_append(&widgets, &widget->node);
@@ -122,4 +125,6 @@ int zmk_widget_modifiers_init(struct zmk_widget_modifiers *widget, lv_obj_t *par
     return 0;
 }
 
-lv_obj_t *zmk_widget_modifiers_obj(struct zmk_widget_modifiers *widget) { return widget->obj; }
+lv_obj_t *zmk_widget_modifiers_obj(struct zmk_widget_modifiers *widget) { 
+    return widget->obj; 
+}

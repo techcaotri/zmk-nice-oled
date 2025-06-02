@@ -65,7 +65,7 @@ struct modifier_symbol ms_cmd = {
 
 struct modifier_symbol *modifier_symbols[] = {
     // this order determines the order of the symbols
-    &ms_shift, &ms_opt, &ms_cmd, &ms_control};
+    &ms_shift, &ms_control, &ms_opt, &ms_cmd};
 
 #define NUM_SYMBOLS (sizeof(modifier_symbols) / sizeof(struct modifier_symbol *))
 

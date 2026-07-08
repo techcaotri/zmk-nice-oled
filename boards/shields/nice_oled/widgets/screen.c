@@ -105,7 +105,9 @@ static void draw_battery_text(lv_obj_t *canvas, const struct status_state *state
     }
 
 #elif IS_ENABLED(CONFIG_NICE_OLED_WIDGET_CENTRAL_SHOW_BATTERY_PERIPHERAL_AND_CENTRAL)
-    // MODO 3: Muestra la batería central y la del PRIMER periférico
+    // MODO 3: Muestra la batería central y la del PRIMER periférico como "<central> <perif>".
+    // El 2do número es la batería del lado DERECHO (peripheral) -> indicador de conexión
+    // del lado derecho (aparece cuando el central ha leído la batería del periférico).
     if (CONFIG_NICE_OLED_SPLIT_TOTAL_DEVICES >= 2) {
         snprintf(text, sizeof(text), "%d  %d", state->batteries[0].level,
                  state->batteries[1].level);
@@ -115,8 +117,14 @@ static void draw_battery_text(lv_obj_t *canvas, const struct status_state *state
     }
 #endif
 
-    // Dibuja la cadena de texto final en la pantalla
-    lv_canvas_draw_text(canvas, 0, 19, lv_obj_get_width(canvas), &label_dsc, text);
+    // Dibuja la cadena de texto final en la pantalla.
+    // Corne Touchpad fix: draw at the CONFIGURABLE battery position (BATTERY_CUSTOM_X/Y),
+    // not the hard-coded (0,19) which lands ABOVE this portrait panel's visible area
+    // (visible content starts ~canvas Y=32). Default CUSTOM_Y=50 puts it just below the
+    // Bluetooth/profile row, replacing the central-only number with "<central> <right>".
+    lv_canvas_draw_text(canvas, CONFIG_NICE_OLED_WIDGET_BATTERY_CUSTOM_X,
+                        CONFIG_NICE_OLED_WIDGET_BATTERY_CUSTOM_Y, lv_obj_get_width(canvas),
+                        &label_dsc, text);
 }
 /*
 static void draw_battery_text(lv_obj_t *canvas, const struct status_state *state) {
